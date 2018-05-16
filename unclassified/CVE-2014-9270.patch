@@ -1,0 +1,31 @@
+From 0bff06ec66d7e6f47e4f679facb9100715cff562 Mon Sep 17 00:00:00 2001
+From: Paul Richards <paul@issue-track.org>
+Date: Thu, 30 Oct 2014 22:04:37 +0000
+Subject: [PATCH] Fix #17583: XSS in projax_api.php
+
+Offensive Security reported this issue via their bug bounty program [1].
+
+The Projax library does not properly escape html strings.  An attacker
+could take advantage of this to perform an XSS attack using the
+profile/Platform field.
+
+[1] http://www.offensive-security.com/bug-bounty-program/
+
+Signed-off-by: Damien Regad <dregad@mantisbt.org>
+---
+ core/projax_api.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/projax_api.php b/core/projax_api.php
+index 951051cbca..a2092cdaa5 100644
+--- a/core/projax_api.php
++++ b/core/projax_api.php
+@@ -70,7 +70,7 @@ function projax_array_serialize_for_autocomplete( $p_array ) {
+ 	$t_matches = '<ul>';
+ 
+ 	foreach( $p_array as $t_entry ) {
+-		$t_matches .= "<li>$t_entry</li>";
++		$t_matches .= '<li>' . string_attribute( $t_entry ) . '</li>';
+ 	}
+ 
+ 	$t_matches .= '</ul>';
